@@ -55,10 +55,31 @@ where exists (select CategoryName
 order by  CategoryID asc, ProductName asc
 go
 
+--q7--
+declare @max int = 15
+select CompanyName as 'Company Name', Country from Customers
+where CustomerID in (select CustomerID 
+				  from Orders
+				  where	OrderID in ( select OrderID --Connection to Order Details
+									 from [Order Details]
+									 where (UnitPrice*Quantity) < @max))
+order by Country
+go
+			
+--q8--
 
+declare @max int =15
+select CompanyName as 'Company Name', Country from Customers
+where exists (select CustomerID
+			  from Customers
+			  where CustomerID in (select CustomerID
+								   from Orders
+								   where OrderID in (select OrderID
+													 from [Order Details]
+													 where (UnitPrice*Quantity < @max) 
 
-
-
+order by Country
+go
 
 
 
