@@ -96,5 +96,17 @@ where ProductID in( select ProductID
 order by ProductName asc
 go
 
-						
+--q10--
+select OrderID as 'Order ID', ShipCity as "Ship City" from Orders
+where OrderID in (select OrderID
+				  from [Order Details]
+				  where ProductID in (select ProductID
+									  from Products
+									  where SupplierID in (select SupplierID
+														   from Suppliers
+														   where Suppliers.City = Orders.ShipCity)))
+order by ShipCity asc
+go
+
+														      						
 										
