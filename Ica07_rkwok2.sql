@@ -71,17 +71,30 @@ go
 declare @max int =15
 select CompanyName as 'Company Name', Country from Customers
 where exists (select CustomerID
-			  from Customers
-			  where CustomerID in (select CustomerID
-								   from Orders
-								   where OrderID in (select OrderID
-													 from [Order Details]
-													 where (UnitPrice*Quantity < @max) 
+			  from Orders
+			  where exists (select OrderID
+							from [Order Details]
+			 				where ((UnitPrice*Quantity) < @max) and [Order Details].OrderID = Orders.OrderID )
+			  and Orders.CustomerID = Customers.CustomerID) --exists does not need the in clause
 
 order by Country
 go
 
+--q9--
 
+declare @7days int = 7;
+select ProductName as 'Product Name' from Products
+where ProductID in( select ProductID
+					from [Order Details]
+					where OrderID in ( select OrderID
+									   from Orders
+									   where CustomerID in (select CustomerID
+															from Customers
+														    where Country in('UK','USA'))
+									   and( DATEDIFF(DD,RequiredDate,ShippedDate)) > @7days))
+
+order by ProductName asc
+go
 
 						
 										
